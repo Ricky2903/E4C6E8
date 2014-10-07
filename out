@@ -1,0 +1,107 @@
+STOREI 1 $t1
+STOREI $t1 a
+STOREI 2 $t2
+STOREI $t2 b
+STOREI 10 $t3
+STOREI $t3 c
+STOREI 20 $t4
+STOREI $t4 d
+WRITEI a
+WRITEI newline
+WRITEI b
+WRITEI newline
+WRITEI c
+WRITEI newline
+WRITEI d
+WRITEI newline
+ADDI a b $t5
+STOREI $t5 $t6
+STOREI $t6 a
+WRITEI a
+WRITEI newline
+MULTI a c $t7
+STOREI $t7 $t8
+STOREI $t8 b
+WRITEI b
+WRITEI newline
+SUBI 0 a $t9
+ADDI $t9 b $t10
+STOREI $t10 $t11
+STOREI $t11 c
+WRITEI c
+WRITEI newline
+SUBI 0 d $t12
+STOREI $t12 $t13
+STOREI $t13 d
+WRITEI d
+WRITEI newline
+ADDI a b $t14
+ADDI d c $t15
+MULTI $t14 $t15 $t16
+ADDI a b $t17
+ADDI $t17 c $t18
+ADDI $t18 d $t19
+DIVI $t19 a $t20
+SUBI $t16 $t20 $t21
+STOREI $t21 $t22
+STOREI $t22 a
+WRITEI a
+WRITEI newline
+ADDI a 10 $t23
+STOREI $t23 $t24
+STOREI $t24 a
+WRITEI a
+WRITEI newline
+ADDI b a $t25
+ADDI $t25 10 $t26
+STOREI $t26 $t27
+STOREI $t27 b
+WRITEI b
+WRITEI newline
+SUBI 0 10 $t28
+STOREI $t28 $t29
+STOREI $t29 c
+WRITEI c
+WRITEI newline
+STOREF 1.0 x
+STOREF 2.0 y
+STOREF 3.14159 z
+WRITEF x
+WRITEI newline
+WRITEF z
+WRITEI newline
+WRITEF y
+WRITEI newline
+DIVF z 2.0 $t30
+STOREF $t30 x
+DIVF z y $t31
+STOREF $t31 y
+WRITEF x
+WRITEI newline
+WRITEF y
+WRITEI newline
+ADDF x y $t32
+ADDF $t32 z $t33
+DIVF $t33 z $t34
+STOREF $t34 t
+WRITEF t
+WRITEI newline
+MULTF t t $t35
+STOREF $t35 t
+WRITEF t
+WRITEI newline
+ADDF t z $t36
+ADDF $t36 t $t37
+DIVF t 2.0 $t38
+ADDF $t37 $t38 $t39
+DIVF z 4.0 $t40
+ADDF $t39 $t40 $t41
+DIVF z 5.0 $t42
+ADDF $t41 $t42 $t43
+DIVF z 6.0 $t44
+ADDF $t43 $t44 $t45
+DIVF z 7.0 $t46
+ADDF $t45 $t46 $t47
+STOREF $t47 t
+WRITEF t
+WRITEI newline

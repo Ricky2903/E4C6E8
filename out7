@@ -1,0 +1,26 @@
+STOREI 20 $t1
+STOREI $t1 a
+STOREI 30 $t2
+STOREI $t2 b
+STOREI 40 $t3
+STOREI $t3 c
+MULTI a b $t4
+ADDI c $t4 $t5
+MULTI a b $t6
+ADDI $t6 c $t7
+DIVI $t7 a $t8
+ADDI $t5 $t8 $t9
+ADDI $t9 20 $t10
+STOREI $t10 $t11
+STOREI $t11 c
+MULTI b b $t12
+ADDI $t12 a $t13
+STOREI $t13 $t14
+STOREI $t14 b
+MULTI b a $t15
+DIVI $t15 a $t16
+STOREI $t16 $t17
+STOREI $t17 a
+WRITEI c
+WRITEI b
+WRITEI a
