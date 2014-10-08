@@ -108,4 +108,8 @@ public class MicroExtendedListener extends MicroBaseListener {
     public void printIR() {
         generator.print();
     }
+    
+    public void printTiny() {
+        generator.printTiny(tableObject);
+    }
 }

@@ -20,6 +20,7 @@ public enum IRopcodeType {
     READF,
     WRITEI,
     WRITEF,
+    WRITES,
     GT,
     GE,
     LT,

@@ -2,13 +2,13 @@
 public class IRnode {
     
     private IRopcodeType _opcode;
-    private String _operand1;
-    private String _operand2;
-    private String _result;
+    private IRinterface _operand1;
+    private IRinterface _operand2;
+    private IRinterface _result;
     private IRnode _next = null;
     private IRnode _br_target = null;
     
-    public IRnode(IRopcodeType opcode, String result){
+    public IRnode(IRopcodeType opcode, IRinterface result){
         if (IRopcodeTypeVerify.verifyOpcode(opcode, 0)) {
             _opcode = opcode;
             _result = result;
@@ -16,16 +16,18 @@ public class IRnode {
             throw new UnsupportedOperationException("Constructor does not match operand count for " + opcode.toString());
         }
     }
-    public IRnode(IRopcodeType opcode, String operand1, String result) {
+    
+    public IRnode(IRopcodeType opcode, IRinterface operand1, IRinterface result) {
         if (IRopcodeTypeVerify.verifyOpcode(opcode,1)) {
             _opcode = opcode;
             _result = result;
             _operand1 = operand1;
         }else{
             throw new UnsupportedOperationException("Constructor does not match operand count for " + opcode.toString());
+     
         }
     }
-    public IRnode(IRopcodeType opcode, String operand1, String operand2, String result) {
+    public IRnode(IRopcodeType opcode, IRinterface operand1, IRinterface operand2, IRinterface result) {
         if (IRopcodeTypeVerify.verifyOpcode(opcode,2)) {
             _opcode = opcode;
             _result = result;
@@ -50,6 +52,22 @@ public class IRnode {
     
     public IRnode getNext() {
         return _next;
+    }
+    
+    public IRopcodeType getOp() {
+        return _opcode;
+    }
+    
+    public IRinterface getResult() {
+        return _result;
+    }
+    
+    public IRinterface getOperand1() {
+        return _operand1;
+    }
+    
+    public IRinterface getOperand2() {
+        return _operand2;
     }
     
     @Override

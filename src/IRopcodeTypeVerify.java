@@ -12,7 +12,7 @@ public class IRopcodeTypeVerify {
         switch (IRopcodeObject) {
             case JUMP: case LABEL:
             case READI: case READF:
-            case WRITEI: case WRITEF:
+            case WRITEI: case WRITEF: case WRITES:
                 return 0;
             case STOREI: case STOREF:
                 return 1;

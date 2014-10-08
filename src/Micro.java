@@ -46,7 +46,7 @@ public class Micro {
         }
         //listenerObject.printSymbolTable();
         listenerObject.printIR();
-        
+        listenerObject.printTiny();
         
         
     }

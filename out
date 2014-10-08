@@ -1,107 +1,95 @@
-STOREI 1 $t1
-STOREI $t1 a
-STOREI 2 $t2
-STOREI $t2 b
-STOREI 10 $t3
-STOREI $t3 c
-STOREI 20 $t4
-STOREI $t4 d
-WRITEI a
-WRITEI newline
-WRITEI b
-WRITEI newline
-WRITEI c
-WRITEI newline
-WRITEI d
-WRITEI newline
-ADDI a b $t5
-STOREI $t5 $t6
-STOREI $t6 a
-WRITEI a
-WRITEI newline
-MULTI a c $t7
-STOREI $t7 $t8
-STOREI $t8 b
-WRITEI b
-WRITEI newline
-SUBI 0 a $t9
-ADDI $t9 b $t10
-STOREI $t10 $t11
-STOREI $t11 c
-WRITEI c
-WRITEI newline
-SUBI 0 d $t12
-STOREI $t12 $t13
-STOREI $t13 d
-WRITEI d
-WRITEI newline
-ADDI a b $t14
-ADDI d c $t15
-MULTI $t14 $t15 $t16
-ADDI a b $t17
-ADDI $t17 c $t18
-ADDI $t18 d $t19
-DIVI $t19 a $t20
-SUBI $t16 $t20 $t21
-STOREI $t21 $t22
-STOREI $t22 a
-WRITEI a
-WRITEI newline
-ADDI a 10 $t23
-STOREI $t23 $t24
-STOREI $t24 a
-WRITEI a
-WRITEI newline
-ADDI b a $t25
-ADDI $t25 10 $t26
-STOREI $t26 $t27
-STOREI $t27 b
-WRITEI b
-WRITEI newline
-SUBI 0 10 $t28
-STOREI $t28 $t29
-STOREI $t29 c
-WRITEI c
-WRITEI newline
-STOREF 1.0 x
-STOREF 2.0 y
-STOREF 3.14159 z
-WRITEF x
-WRITEI newline
-WRITEF z
-WRITEI newline
-WRITEF y
-WRITEI newline
-DIVF z 2.0 $t30
-STOREF $t30 x
-DIVF z y $t31
-STOREF $t31 y
-WRITEF x
-WRITEI newline
-WRITEF y
-WRITEI newline
-ADDF x y $t32
-ADDF $t32 z $t33
-DIVF $t33 z $t34
-STOREF $t34 t
-WRITEF t
-WRITEI newline
-MULTF t t $t35
-STOREF $t35 t
-WRITEF t
-WRITEI newline
-ADDF t z $t36
-ADDF $t36 t $t37
-DIVF t 2.0 $t38
-ADDF $t37 $t38 $t39
-DIVF z 4.0 $t40
-ADDF $t39 $t40 $t41
-DIVF z 5.0 $t42
-ADDF $t41 $t42 $t43
-DIVF z 6.0 $t44
-ADDF $t43 $t44 $t45
-DIVF z 7.0 $t46
-ADDF $t45 $t46 $t47
-STOREF $t47 t
-WRITEF t
-WRITEI newline
+STOREI LiteralASTnode@5106bcba TermASTnode@115080e5
+STOREI LiteralASTnode@3c3e4344 TermASTnode@1bb24442
+STOREI LiteralASTnode@549f5742 TermASTnode@2919d975
+STOREI LiteralASTnode@6013a567 TermASTnode@29d03e78
+WRITEI TermASTnode@26b54dba
+WRITES TermASTnode@49020230
+WRITEI TermASTnode@22ddc2c2
+WRITES TermASTnode@d1d6070
+WRITEI TermASTnode@3a65fca
+WRITES TermASTnode@1fdac8a5
+WRITEI TermASTnode@54aad8f9
+WRITES TermASTnode@1c8aeedc
+ADDI TempASTnode@6547bc27 TermASTnode@4891d863 TempASTnode@6547bc27
+STOREI TempASTnode@6547bc27 TermASTnode@5f1570cd
+WRITEI TermASTnode@78a0d37f
+WRITES TermASTnode@69d74b8
+MULTI TempASTnode@4b59df6c TermASTnode@795b5219 TempASTnode@4b59df6c
+STOREI TempASTnode@4b59df6c TermASTnode@5a6b258d
+WRITEI TermASTnode@306e7a5b
+WRITES TermASTnode@25230534
+SUBI TempASTnode@1e2aabf8 TermASTnode@3803641 TempASTnode@1e2aabf8
+ADDI TempASTnode@5669e732 TermASTnode@42c9aff0 TempASTnode@5669e732
+STOREI TempASTnode@5669e732 TermASTnode@473dd7d1
+WRITEI TermASTnode@2d23fee1
+WRITES TermASTnode@16327cee
+SUBI TempASTnode@4ca7f8a4 TermASTnode@27b4fe4d TempASTnode@4ca7f8a4
+STOREI TempASTnode@4ca7f8a4 TermASTnode@5ba38598
+WRITEI TermASTnode@4c97ed28
+WRITES TermASTnode@a530461
+ADDI TempASTnode@50448192 TermASTnode@4196c169 TempASTnode@50448192
+ADDI TempASTnode@1073f623 TermASTnode@2d247c45 TempASTnode@1073f623
+MULTI TempASTnode@365aad2a TempASTnode@1073f623 TempASTnode@365aad2a
+ADDI TempASTnode@7b1ebc46 TermASTnode@1edad6d0 TempASTnode@7b1ebc46
+ADDI TempASTnode@314d0183 TermASTnode@369e58be TempASTnode@314d0183
+ADDI TempASTnode@55d43df5 TermASTnode@612fcbd8 TempASTnode@55d43df5
+DIVI TempASTnode@8f003c1 TermASTnode@4586787c TempASTnode@8f003c1
+SUBI TempASTnode@7f50388c TempASTnode@8f003c1 TempASTnode@7f50388c
+STOREI TempASTnode@7f50388c TermASTnode@6bb0b0a0
+WRITEI TermASTnode@1d1c0f9c
+WRITES TermASTnode@1d44d9b2
+ADDI TempASTnode@13304421 LiteralASTnode@45c8dc5e TempASTnode@13304421
+STOREI TempASTnode@13304421 TermASTnode@5fbc31d
+WRITEI TermASTnode@53c6a7fc
+WRITES TermASTnode@173ebc5c
+ADDI TempASTnode@17c047f0 TermASTnode@50b2e9be TempASTnode@17c047f0
+ADDI TempASTnode@120fe256 LiteralASTnode@50d4855d TempASTnode@120fe256
+STOREI TempASTnode@120fe256 TermASTnode@307fc620
+WRITEI TermASTnode@14a877c0
+WRITES TermASTnode@404de8d8
+SUBI TempASTnode@3af1dde3 LiteralASTnode@5d1e8050 TempASTnode@3af1dde3
+STOREI TempASTnode@3af1dde3 TermASTnode@7d7a33f2
+WRITEI TermASTnode@61e89539
+WRITES TermASTnode@6c9d0366
+STOREF LiteralASTnode@384a553f TermASTnode@1822b7f8
+STOREF LiteralASTnode@f5c0729 TermASTnode@62da1c9f
+STOREF LiteralASTnode@5d8d3d6c TermASTnode@63bbad6f
+WRITEF TermASTnode@36778590
+WRITES TermASTnode@60e1ccdf
+WRITEF TermASTnode@851762a
+WRITES TermASTnode@1c24c3aa
+WRITEF TermASTnode@31a9dc55
+WRITES TermASTnode@6c069ec
+DIVF TempASTnode@426a086a LiteralASTnode@3f4e8936 TempASTnode@426a086a
+STOREF TempASTnode@426a086a TermASTnode@3d1258b2
+DIVF TempASTnode@7f7d2d70 TermASTnode@73325573 TempASTnode@7f7d2d70
+STOREF TempASTnode@7f7d2d70 TermASTnode@6d882c1a
+WRITEF TermASTnode@7079724
+WRITES TermASTnode@353c017
+WRITEF TermASTnode@6f6827b5
+WRITES TermASTnode@1f071537
+ADDF TempASTnode@a01ddcb TermASTnode@883f8f TempASTnode@a01ddcb
+ADDF TempASTnode@7104c58e TermASTnode@70462799 TempASTnode@7104c58e
+DIVF TempASTnode@dd1e765 TermASTnode@4fae9ef9 TempASTnode@dd1e765
+STOREF TempASTnode@dd1e765 TermASTnode@5147164d
+WRITEF TermASTnode@120942eb
+WRITES TermASTnode@1e085b8d
+MULTF TempASTnode@36b29562 TermASTnode@66d70fc TempASTnode@36b29562
+STOREF TempASTnode@36b29562 TermASTnode@7b14b3af
+WRITEF TermASTnode@c20e54a
+WRITES TermASTnode@43ad637e
+ADDF TempASTnode@2c5f07e8 TermASTnode@1300271a TempASTnode@2c5f07e8
+ADDF TempASTnode@6f0725b4 TermASTnode@3e3c855e TempASTnode@6f0725b4
+DIVF TempASTnode@7757fe3d LiteralASTnode@31f49401 TempASTnode@7757fe3d
+ADDF TempASTnode@3020e746 TempASTnode@7757fe3d TempASTnode@3020e746
+DIVF TempASTnode@402fbd59 LiteralASTnode@7e383efa TempASTnode@402fbd59
+ADDF TempASTnode@1eaecfd3 TempASTnode@402fbd59 TempASTnode@1eaecfd3
+DIVF TempASTnode@66ce3561 LiteralASTnode@6c12a801 TempASTnode@66ce3561
+ADDF TempASTnode@3cd41115 TempASTnode@66ce3561 TempASTnode@3cd41115
+DIVF TempASTnode@6ad98e6 LiteralASTnode@6f112776 TempASTnode@6ad98e6
+ADDF TempASTnode@4f35ecf1 TempASTnode@6ad98e6 TempASTnode@4f35ecf1
+DIVF TempASTnode@5d56ead7 LiteralASTnode@7553f920 TempASTnode@5d56ead7
+ADDF TempASTnode@5c08e00d TempASTnode@5d56ead7 TempASTnode@5c08e00d
+STOREF TempASTnode@5c08e00d TermASTnode@4aada4af
+WRITEF TermASTnode@4e170376
+WRITES TermASTnode@48e46007

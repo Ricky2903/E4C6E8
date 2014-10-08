@@ -9,57 +9,55 @@ public class IRGenerator {
     private IRnode root = null;
     public IRGenerator() {
     }
-    public IRval generateExpr(MicroParser.ExprContext exprContextObject, SymbolTable tableObject) {
-        IRval res = generateFactor(exprContextObject.factor(0), tableObject);
+    public IRinterface generateExpr(MicroParser.ExprContext exprContextObject, SymbolTable tableObject) {
+        IRinterface expr = generateFactor(exprContextObject.factor(0), tableObject);
         for (int i = 1; i<exprContextObject.factor().size(); i++) {
-            IRval temp = generateFactor(exprContextObject.factor(i), tableObject);
+            
+            IRinterface temp = generateFactor(exprContextObject.factor(i), tableObject);
+            
+            SymbolType type = SymbolType.NULL;
+            IRopcodeType op;
+            
+            if (expr.getType() == SymbolType.FLOAT && temp.getType() == SymbolType.FLOAT) type = SymbolType.FLOAT;
+            else if (expr.getType() == SymbolType.INT && temp.getType() == SymbolType.INT) type = SymbolType.INT;
+            else throw new RuntimeException("ERROR: Operator " + exprContextObject.addop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
             
             if (exprContextObject.addop(i-1).ADD() != null) {
-                if (res.isFloat()) {
-                    addNode(new IRnode(IRopcodeType.ADDF, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), true);
-                }else {
-                    addNode(new IRnode(IRopcodeType.ADDI, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(),false);
-                }
+                if (type == SymbolType.FLOAT) op = IRopcodeType.ADDF;
+                else op = IRopcodeType.ADDI;
             } else {
-                if (res.isFloat()) {
-                    addNode(new IRnode(IRopcodeType.SUBF, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), true);
-                } else {
-                    addNode(new IRnode(IRopcodeType.SUBI, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), false);
-                }
+                if (type == SymbolType.FLOAT) op = IRopcodeType.SUBF;
+                else op = IRopcodeType.SUBI;
             }
+            
+            expr = new TempASTnode(type, RegFile.getNext());
+            addNode(new IRnode(op, expr, temp, expr));
         }
-        return res;
+        return expr;
     }
-    private IRval generateFactor(MicroParser.FactorContext exprContextObject, SymbolTable tableObject) {
-        IRval res = generatePostfix(exprContextObject.postfix_expr(0), tableObject);
+    private IRinterface generateFactor(MicroParser.FactorContext exprContextObject, SymbolTable tableObject) {
+        IRinterface expr = generatePostfix(exprContextObject.postfix_expr(0), tableObject);
         for (int i = 1; i<exprContextObject.postfix_expr().size(); i++) {
-            IRval temp = generatePostfix(exprContextObject.postfix_expr(i), tableObject);
+            IRinterface temp = generatePostfix(exprContextObject.postfix_expr(i), tableObject);
+            SymbolType type = SymbolType.NULL;
+            IRopcodeType op;
+            if (expr.getType() == SymbolType.FLOAT && temp.getType() == SymbolType.FLOAT) type = SymbolType.FLOAT;
+            else if (expr.getType() == SymbolType.INT && temp.getType() == SymbolType.INT) type = SymbolType.INT;
+            else throw new RuntimeException("ERROR: Operator " + exprContextObject.mulop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
             
             if (exprContextObject.mulop(i-1).MULTIPLY() != null) {
-                if (res.isFloat()) {
-                    addNode(new IRnode(IRopcodeType.MULTF, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), true);
-                }else {
-                    addNode(new IRnode(IRopcodeType.MULTI, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(),false);
-                }
+                if (type == SymbolType.FLOAT) op = IRopcodeType.MULTF;
+                else op = IRopcodeType.MULTI;
             } else {
-                if (res.isFloat()) {
-                    addNode(new IRnode(IRopcodeType.DIVF, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), true);
-                } else {
-                    addNode(new IRnode(IRopcodeType.DIVI, res.toString(), temp.toString(), RegFile.getNext()));
-                    res = new IRval(RegFile.getCurrent(), false);
-                }
+                if (type == SymbolType.FLOAT) op = IRopcodeType.DIVF;
+                else op = IRopcodeType.DIVI;
             }
+            expr = new TempASTnode(type, RegFile.getNext());
+            addNode(new IRnode(op, expr, temp, expr));
         }
-        return res;
+        return expr;
     }
-    private IRval generatePostfix(MicroParser.Postfix_exprContext exprContextObject, SymbolTable tableObject) {
+    private IRinterface generatePostfix(MicroParser.Postfix_exprContext exprContextObject, SymbolTable tableObject) {
         if (exprContextObject.primary() != null) {
             //handle the primary postfix
             if (exprContextObject.primary().expr() != null) {
@@ -68,45 +66,45 @@ public class IRGenerator {
                 String id = exprContextObject.primary().id().getText();
                 Symbol s = tableObject.findSymbol(id);
                 if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
-                return new IRval(id, s.getType()==SymbolType.FLOAT ? true : false);
+                return new TermASTnode(s.getType(),s.getID());
             } else if (exprContextObject.primary().FLOATLITERAL() != null) {
-                return new IRval(Float.parseFloat(exprContextObject.primary().FLOATLITERAL().toString()));
+                return new LiteralASTnode(Float.parseFloat(exprContextObject.primary().FLOATLITERAL().toString()));
             } else if (exprContextObject.primary().INTLITERAL() != null) {
-                return new IRval(Integer.parseInt(exprContextObject.primary().INTLITERAL().toString()));
+                return new LiteralASTnode(Integer.parseInt(exprContextObject.primary().INTLITERAL().toString()));
             } else return null;
         }else {
             throw new RuntimeException("Cannot handle call expressions yet");
-        }
-    }
+        }    }
+
     
     public void generateAssignment(MicroParser.Assign_stmtContext exprContextObject, SymbolTable tableObject) {
-        IRval tempreg = generateExpr(exprContextObject.expr(), tableObject);
-        if (tempreg.isFloat()) {
-            addNode(new IRnode(IRopcodeType.STOREF, tempreg.toString(), exprContextObject.id().getText()));
-        }
-        else {
-            addNode(new IRnode(IRopcodeType.STOREI, tempreg.toString(), RegFile.getNext()));
-            tempreg = new IRval(RegFile.getCurrent(),false);
-            addNode(new IRnode(IRopcodeType.STOREI, tempreg.toString(), exprContextObject.id().getText()));
-        }
+        IRinterface tempreg = generateExpr(exprContextObject.expr(), tableObject);
+        Symbol s = tableObject.findSymbol(exprContextObject.id().getText());
+        if (s == null) throw new RuntimeException("ERROR: Could not find symbol " + exprContextObject.id().getText());
+        if (s.getType() != tempreg.getType()) throw new RuntimeException("ERROR: type mismatch");
+        if (tempreg.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.STOREF, tempreg, new TermASTnode(s.getType(), s.getID())));
+        else if (tempreg.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.STOREI, tempreg, new TermASTnode(s.getType(), s.getID())));
+        else throw new RuntimeException("ERROR: Assignment not valid for type " + tempreg.getType());
     }
     
     public void generateRead(MicroParser.Read_stmtContext exprContextObject, SymbolTable tableObject) {
         for (MicroParser.IdContext id : exprContextObject.id_list().id()) {
             Symbol s = tableObject.findSymbol(id.getText());
             if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
-            if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.READF, s.getID()));
-            else addNode(new IRnode(IRopcodeType.READI, s.getID()));
+            if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.READF, new TermASTnode(s.getType(), s.getID())));
+            else if (s.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.READI, new TermASTnode(s.getType(), s.getID())));
+            else throw new RuntimeException("ERROR: Read statement not valid for type " + s.getType());
         }
     }
     public void generateWrite(MicroParser.Write_stmtContext exprContextObject, SymbolTable tableObject) {
         for (MicroParser.IdContext id : exprContextObject.id_list().id()) {
             Symbol s = tableObject.findSymbol(id.getText());
             if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
-            if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.WRITEF, s.getID()));
-            else addNode(new IRnode(IRopcodeType.WRITEI, s.getID()));
-        }
-    }
+            if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.WRITEF, new TermASTnode(s.getType(), s.getID())));
+            else if (s.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.WRITEI, new TermASTnode(s.getType(), s.getID())));
+            else if (s.getType() == SymbolType.STRING) addNode(new IRnode(IRopcodeType.WRITES, new TermASTnode(s.getType(), s.getID())));
+            else throw new RuntimeException("ERROR: Write statement not valid for type " + s.getType());
+        }    }
     
     private void addNode(IRnode node) {
         if (head == null) {
