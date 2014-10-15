@@ -32,29 +32,40 @@ public class TinyUtility {
     private static String Simulate(IRnode node) {
         IRopcodeType op = node.getOp();
         String opstr = "";
+        boolean performMove = false;
         switch(op) {
             case MULTI:
                 opstr = "muli ";
+                performMove = true;
                 break;
             case MULTF:
                 opstr = "mulr ";
+                performMove = true;
                 break;
             case ADDI:
                 opstr = "addi ";
+                performMove = true;
                 break;
             case ADDF:
                 opstr = "addr ";
+                performMove = true;
                 break;
             case DIVI:
                 opstr = "divi ";
+                performMove = true;
                 break;
             case DIVF:
                 opstr = "divr ";
+                performMove = true;
                 break;
             case SUBI:
-                opstr = "subi "; break;
+                opstr = "subi ";
+                performMove = true;
+                break;
             case SUBF:
-                opstr = "subr "; break;
+                opstr = "subr ";
+                performMove = true;
+                break;
             case READI:
                 opstr = "sys readi "; break;
             case READF:

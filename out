@@ -1,33 +1,81 @@
-STOREI 20 a
-STOREI 30 b
-STOREI 40 c
-STOREI c $t1
-STOREI a $t2
-STOREI b $t3
-MULTI $t2 $t3 $t4
-ADDI $t1 $t4 $t5
-STOREI a $t6
-STOREI b $t7
-MULTI $t6 $t7 $t8
-STOREI c $t9
-ADDI $t8 $t9 $t10
-STOREI a $t11
-DIVI $t10 $t11 $t12
-ADDI $t5 $t12 $t13
-ADDI $t13 20 $t14
-STOREI $t14 c
-STOREI b $t15
-STOREI b $t16
-MULTI $t15 $t16 $t17
-STOREI a $t18
-ADDI $t17 $t18 $t19
-STOREI $t19 b
-STOREI b $t20
-STOREI a $t21
-MULTI $t20 $t21 $t22
-STOREI a $t23
-DIVI $t22 $t23 $t24
-STOREI $t24 a
-WRITEI c
-WRITEI b
-WRITEI a
+;STOREI 20 a
+;STOREI 30 b
+;STOREI 40 c
+;STOREI c $t1
+;STOREI a $t2
+;STOREI b $t3
+;MULTI $t2 $t3 $t4
+;ADDI $t1 $t4 $t5
+;STOREI a $t6
+;STOREI b $t7
+;MULTI $t6 $t7 $t8
+;STOREI c $t9
+;ADDI $t8 $t9 $t10
+;STOREI a $t11
+;DIVI $t10 $t11 $t12
+;ADDI $t5 $t12 $t13
+;ADDI $t13 20 $t14
+;STOREI $t14 c
+;STOREI b $t15
+;STOREI b $t16
+;MULTI $t15 $t16 $t17
+;STOREI a $t18
+;ADDI $t17 $t18 $t19
+;STOREI $t19 b
+;STOREI b $t20
+;STOREI a $t21
+;MULTI $t20 $t21 $t22
+;STOREI a $t23
+;DIVI $t22 $t23 $t24
+;STOREI $t24 a
+;WRITEI c
+;WRITEI b
+;WRITEI a
+var a
+var b
+var c
+move 20 a
+move 30 b
+move 40 c
+move c r1
+move a r2
+move b r3
+move r2 r4
+muli r3 r4
+move r1 r5
+addi r4 r5
+move a r6
+move b r7
+move r6 r8
+muli r7 r8
+move c r9
+move r8 r10
+addi r9 r10
+move a r11
+move r10 r12
+divi r11 r12
+move r5 r13
+addi r12 r13
+move r13 r14
+addi 20 r14
+move r14 c
+move b r15
+move b r16
+move r15 r17
+muli r16 r17
+move a r18
+move r17 r19
+addi r18 r19
+move r19 b
+move b r20
+move a r21
+move r20 r22
+muli r21 r22
+move a r23
+move r22 r24
+divi r23 r24
+move r24 a
+sys writei c
+sys writei b
+sys writei a
+end

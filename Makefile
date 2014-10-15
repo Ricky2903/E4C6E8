@@ -17,7 +17,7 @@ compiler:
 	javac -cp $(LIB_ANTLR) -d classes src/*.java build/*.java
 
 clean:
-	rm -rf classes build outputs
+	rm -rf classes build 
 
 
 .PHONY: all group compiler clean
