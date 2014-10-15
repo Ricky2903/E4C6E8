@@ -14,7 +14,7 @@ public class TinyUtility {
             code += Simulate(curr);
             curr = curr.getNext();
         }
-        return varDecl + "\n\n" + code;
+        return varDecl.trim() + "\n" + code.trim() + "\n" + "end";
     }
     
     private static String createDecl(SymbolTable s) {
@@ -75,7 +75,8 @@ public class TinyUtility {
             case 1:
                 opstr += fixReg(node.getOperand1()) + " " + fixReg(node.getResult()); break;
             case 2:
-                opstr += fixReg(node.getOperand1()) + " " + fixReg(node.getOperand2()) + " " + fixReg(node.getResult());
+                opstr = "move " + fixReg(node.getOperand1()) + " " + fixReg(node.getResult()) + "\n" + opstr;
+                opstr += fixReg(node.getOperand2()) + " " + fixReg(node.getResult());
         }
         return opstr + "\n";
     }

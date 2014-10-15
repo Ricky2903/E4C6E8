@@ -91,7 +91,7 @@ public class MicroExtendedListener extends MicroBaseListener {
 	}
 	
 	public void printSymbolTable() {
-		tableObject.printRcsv();
+		//tableObject.printRcsv();
 	}
     
     @Override public void exitAssign_stmt(@NotNull MicroParser.Assign_stmtContext contextObject) {

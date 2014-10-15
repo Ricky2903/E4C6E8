@@ -44,7 +44,7 @@ public class Micro {
         	System.out.println(e.getMessage());
         	System.exit(0);
         }
-        //listenerObject.printSymbolTable();
+        listenerObject.printSymbolTable();
         listenerObject.printIR();
         listenerObject.printTiny();
         

@@ -74,11 +74,11 @@ public class IRnode {
     public String toString() {
         switch(IRopcodeTypeVerify.numOperands(this._opcode)) {
             case 0:
-                return _opcode.toString() + " " + _result;
+                return _opcode.toString() + " " + _result.getName();
             case 1:
-                return _opcode.toString() + " " + _operand1 + " " + _result;
+                return _opcode.toString() + " " + _operand1.getName() + " " + _result.getName();
             default:
-                return _opcode.toString() + " " + _operand1 + " " + _operand2 + " " + _result;
+                return _opcode.toString() + " " + _operand1.getName() + " " + _operand2.getName() + " " + _result.getName();
         }
     }
 }

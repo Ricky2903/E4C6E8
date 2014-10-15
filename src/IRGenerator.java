@@ -30,8 +30,9 @@ public class IRGenerator {
                 else op = IRopcodeType.SUBI;
             }
             
-            expr = new TempASTnode(type, RegFile.getNext());
-            addNode(new IRnode(op, expr, temp, expr));
+            TempASTnode tempnode = new TempASTnode(type, RegFile.getNext());
+            addNode(new IRnode(op, expr, temp, tempnode));
+            expr = tempnode;
         }
         return expr;
     }
@@ -52,8 +53,9 @@ public class IRGenerator {
                 if (type == SymbolType.FLOAT) op = IRopcodeType.DIVF;
                 else op = IRopcodeType.DIVI;
             }
-            expr = new TempASTnode(type, RegFile.getNext());
-            addNode(new IRnode(op, expr, temp, expr));
+            TempASTnode tempnode = new TempASTnode(type, RegFile.getNext());
+            addNode(new IRnode(op, expr, temp, tempnode));
+            expr = tempnode;
         }
         return expr;
     }
@@ -62,11 +64,16 @@ public class IRGenerator {
             //handle the primary postfix
             if (exprContextObject.primary().expr() != null) {
                 return generateExpr(exprContextObject.primary().expr(), tableObject);
-            } else if (exprContextObject.primary().id() != null) {
+            } else if (exprContextObject.primary().id() != null)
+            {
                 String id = exprContextObject.primary().id().getText();
                 Symbol s = tableObject.findSymbol(id);
                 if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
-                return new TermASTnode(s.getType(),s.getID());
+                TempASTnode tmpreg = new TempASTnode (s.getType(), RegFile.getNext());
+                if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.STOREF, new TermASTnode(s.getType(), s.getID()), tmpreg));
+                else if (s.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.STOREI, new TermASTnode(s.getType(),s.getID()), tmpreg));
+                else throw new RuntimeException("Cannot create postfix for type " + s.getType());
+                return tmpreg;
             } else if (exprContextObject.primary().FLOATLITERAL() != null) {
                 return new LiteralASTnode(Float.parseFloat(exprContextObject.primary().FLOATLITERAL().toString()));
             } else if (exprContextObject.primary().INTLITERAL() != null) {
@@ -122,5 +129,9 @@ public class IRGenerator {
             System.out.println(h.toString());
             h = h.getNext();
         }
+    }
+    
+    public void printTiny(SymbolTable s) {
+        System.out.println(TinyUtility.generateTiny(root, s));
     }
 }
