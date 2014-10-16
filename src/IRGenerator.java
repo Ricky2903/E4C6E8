@@ -4,11 +4,20 @@
  
  Step4 Version 1.0: IR Generator class file 
  */
+
+import java.util.HashMap;
+import java.util.Stack;
+
 public class IRGenerator {
     private IRnode head = null;
     private IRnode root = null;
+    
+    private HashMap<String, IRnode> lable_table = new HashMap<String, IRnode>();
+    private Stack<Label> conditional_label = new Stack<Label> ();
+    
     public IRGenerator() {
     }
+    
     public IRinterface generateExpr(MicroParser.ExprContext exprContextObject, SymbolTable tableObject) {
         IRinterface expr = generateFactor(exprContextObject.factor(0), tableObject);
         for (int i = 1; i<exprContextObject.factor().size(); i++) {
@@ -111,7 +120,63 @@ public class IRGenerator {
             else if (s.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.WRITEI, new TermASTnode(s.getType(), s.getID())));
             else if (s.getType() == SymbolType.STRING) addNode(new IRnode(IRopcodeType.WRITES, new TermASTnode(s.getType(), s.getID())));
             else throw new RuntimeException("ERROR: Write statement not valid for type " + s.getType());
-        }    }
+        }
+    }
+    
+    public void generateIf(MicroParser.If_stmtContext exprContextObject, SymbolTable tableObject) {
+        generateIf(exprContextObject.cond(), tableObject);
+    }
+    
+    private void generateIf(MicroParser.CondContext conditionalObject, SymbolTable tableObject) {
+        IRinterface conditionalExpr1 = generateExpr(conditionalObject.expr(0), tableObject);
+        IRinterface conditionalExpr2 = generateExpr(conditionalObject.expr(1), tableObject);
+        //Generate the inverse comparison.  The code will skip over any statements and jump to another label.
+        //Move expression 2 to a register if it is a variable, since tiny cannot deal with 2nd argument non-registers/literals
+        
+        if (conditionalExpr2.getASTtype() == ASTtype.TERM) {
+            TempASTnode tempreg = new TempASTnode(conditionalExpr2.getType(), RegFile.getNext());
+            if (conditionalExpr1.getType() == SymbolType.FLOAT)
+                addNode(new IRnode(IRopcodeType.STOREF, condExpr2, tempreg));
+            else
+                addNode(new IRnode(IRopcodeType.STOREI, condExpr2, tempreg));
+            conditionalExpr2 = tempreg;
+        }
+        IRopcodeType compare = Comparison.invert(Compare.generateComparisonOp(conditionalObject.compop()));
+        Label conditional_label =  new Label(LabelFile.getCondLabel());
+        addNode(new IRnode(compare, conditionalExpr1, conditionalExpr2, conditional_label));
+        cond_label.push(conditional_label);
+    }
+    
+    public void generateElse(MicroParser.Else_partContext exprContextObject) {
+        if (exprContextObject.ELSE() != null) {
+            //If there is an else part, insert the label so that the original branch skips to the else statement
+            //list instead of the end of the entire if expression.
+            Label endLabel = new LabelASTtype(LabelFile.getCondLabel());
+            addNode(new IRnode(IRopcodeType.JUMP, endLabel));
+            addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
+            cond_label.push(endLabel);
+        }
+        //If there isn't an else part, we are at the end. Do nothing.  The end if generator will supply the label.
+    }
+    
+    public void generateEndIf() {
+        addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
+    }
+    
+    public void generateWhile(MicroParser.While_stmtContext exprContextObject, SymbolTable tableObject) {
+        //Drop a label at the beginning so we can come back here
+        Label labelObject = new LabelASTtype(LabelFile.getLoopLabel());
+        addNode(new IRnode(IRopcodeType.LABEL, labelObject));
+        //Evaluate the expression and jump to the end if it's false
+        generateIf(exprContextObject.conditionalObject(), tableObject);
+        cond_label.push(labelObject);
+    }
+    
+    public void generateEndWhile() {
+        addNode(new IRnode(IRopcodeType.JUMP, cond_label.pop()));
+        addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
+        
+    }
     
     private void addNode(IRnode node) {
         if (head == null) {
@@ -121,6 +186,15 @@ public class IRGenerator {
         else {
             head.setNext(node);
             head = node;
+        }
+        switch (node.getOp()){
+            case LABEL:
+                label_table.put(node.getResult().getName(), node);
+                break;
+            case JUMP: case GE: case GT: case LT: case LE: case EQ: case NE:
+                node.setBranchTarget(label_table.get(node.getResult().getName()));
+                break;
+            default:
         }
     }
     public void print() {

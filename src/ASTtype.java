@@ -6,5 +6,6 @@
 public enum ASTtype {
     LITERAL,
     TERM,
-    TEMPORARY
+    TEMPORARY,
+    LABEL
 }
