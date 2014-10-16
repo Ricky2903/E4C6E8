@@ -14,7 +14,7 @@ public class TinyUtility {
             code += Simulate(curr);
             curr = curr.getNext();
         }
-        return varDecl.trim() + "\n" + code.trim() + "\n" + "end";
+        return varDecl.trim() + "\n" + code.trim() + "\n" + "sys halt";
     }
     
     private static String createDecl(SymbolTable s) {

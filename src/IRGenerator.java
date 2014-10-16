@@ -125,10 +125,15 @@ public class IRGenerator {
     }
     public void print() {
         IRnode h = root;
+        System.out.println(";" + "IR code");
+        System.out.println(";" + "LABEL main");
+        System.out.println(";" + "LINK");
         while (h != null) {
             System.out.println(h.toString());
             h = h.getNext();
         }
+        System.out.println(";" + "RET");
+        System.out.println(";" + "tiny code");
     }
     
     public void printTiny(SymbolTable s) {
