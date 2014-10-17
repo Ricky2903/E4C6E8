@@ -6,7 +6,7 @@
 */
 
 public class Compare {
-    public static IROpCodeType generateComparisonOp(MicroParser.CompopContext compareObject) {
+    public static IRopcodeType generateComparisonOp(MicroParser.CompopContext compareObject) {
         if (compareObject.LTHAN()!= null) {
             return IRopcodeType.LT;
         } else if (compareObject.LTHANEQ() != null) {

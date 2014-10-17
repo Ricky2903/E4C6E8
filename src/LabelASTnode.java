@@ -1,12 +1,12 @@
 
 public class LabelASTnode implements IRinterface {
     private String labelvalue;
-    public Label (String value) {
+    public LabelASTnode (String value) {
         labelvalue = value;
     }
     @Override
-    public AccessMethod getAccessMethod() {
-        return AccessMethod.LABEL;
+    public ASTtype getASTtype() {
+        return ASTtype.LABEL;
     }
     
     @Override

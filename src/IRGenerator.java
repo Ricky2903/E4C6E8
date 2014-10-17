@@ -12,8 +12,8 @@ public class IRGenerator {
     private IRnode head = null;
     private IRnode root = null;
     
-    private HashMap<String, IRnode> lable_table = new HashMap<String, IRnode>();
-    private Stack<Label> conditional_label = new Stack<Label> ();
+    private HashMap<String, IRnode> label_table = new HashMap<String, IRnode>();
+    private Stack<LabelASTnode> conditional_label = new Stack<LabelASTnode> ();
     
     public IRGenerator() {
     }
@@ -136,45 +136,45 @@ public class IRGenerator {
         if (conditionalExpr2.getASTtype() == ASTtype.TERM) {
             TempASTnode tempreg = new TempASTnode(conditionalExpr2.getType(), RegFile.getNext());
             if (conditionalExpr1.getType() == SymbolType.FLOAT)
-                addNode(new IRnode(IRopcodeType.STOREF, condExpr2, tempreg));
+                addNode(new IRnode(IRopcodeType.STOREF, conditionalExpr2, tempreg));
             else
-                addNode(new IRnode(IRopcodeType.STOREI, condExpr2, tempreg));
+                addNode(new IRnode(IRopcodeType.STOREI, conditionalExpr2, tempreg));
             conditionalExpr2 = tempreg;
         }
-        IRopcodeType compare = Comparison.invert(Compare.generateComparisonOp(conditionalObject.compop()));
-        Label conditional_label =  new Label(LabelFile.getCondLabel());
-        addNode(new IRnode(compare, conditionalExpr1, conditionalExpr2, conditional_label));
-        cond_label.push(conditional_label);
+        IRopcodeType compare = Compare.invert(Compare.generateComparisonOp(conditionalObject.compop()));
+        LabelASTnode cond_label =  new LabelASTnode(LabelFile.getCondLabel());
+        addNode(new IRnode(compare, conditionalExpr1, conditionalExpr2, cond_label));
+        conditional_label.push(cond_label);
     }
     
     public void generateElse(MicroParser.Else_partContext exprContextObject) {
         if (exprContextObject.ELSE() != null) {
             //If there is an else part, insert the label so that the original branch skips to the else statement
             //list instead of the end of the entire if expression.
-            Label endLabel = new LabelASTtype(LabelFile.getCondLabel());
+            LabelASTnode endLabel = new LabelASTnode(LabelFile.getCondLabel());
             addNode(new IRnode(IRopcodeType.JUMP, endLabel));
-            addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
-            cond_label.push(endLabel);
+            addNode(new IRnode(IRopcodeType.LABEL, conditional_label.pop()));
+            conditional_label.push(endLabel);
         }
         //If there isn't an else part, we are at the end. Do nothing.  The end if generator will supply the label.
     }
     
     public void generateEndIf() {
-        addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
+        addNode(new IRnode(IRopcodeType.LABEL, conditional_label.pop()));
     }
     
     public void generateWhile(MicroParser.While_stmtContext exprContextObject, SymbolTable tableObject) {
         //Drop a label at the beginning so we can come back here
-        Label labelObject = new LabelASTtype(LabelFile.getLoopLabel());
+        LabelASTnode labelObject = new LabelASTnode(LabelFile.getLoopLabel());
         addNode(new IRnode(IRopcodeType.LABEL, labelObject));
         //Evaluate the expression and jump to the end if it's false
-        generateIf(exprContextObject.conditionalObject(), tableObject);
-        cond_label.push(labelObject);
+        generateIf(exprContextObject.cond(), tableObject);
+        conditional_label.push(labelObject);
     }
     
     public void generateEndWhile() {
-        addNode(new IRnode(IRopcodeType.JUMP, cond_label.pop()));
-        addNode(new IRnode(IRopcodeType.LABEL, cond_label.pop()));
+        addNode(new IRnode(IRopcodeType.JUMP, conditional_label.pop()));
+        addNode(new IRnode(IRopcodeType.LABEL, conditional_label.pop()));
         
     }
     
