@@ -1,4 +1,3 @@
-
 public class LabelASTnode implements IRinterface {
     private String labelvalue;
     public LabelASTnode (String value) {

@@ -6,6 +6,9 @@
  */
 
 public class TinyUtility {
+    
+    private static Tinynode head = null;
+    private static Tinynode root = null;
     public static String generateTiny(IRnode head, SymbolTable rootTable) {
         String varDecl = createDecl(rootTable);
         String code = "";
@@ -32,7 +35,9 @@ public class TinyUtility {
     private static String Simulate(IRnode node) {
         IRopcodeType op = node.getOp();
         String opstr = "";
+        String jmpstr = "";
         boolean performMove = false;
+        
         switch(op) {
             case MULTI:
                 opstr = "muli ";
@@ -78,6 +83,22 @@ public class TinyUtility {
                 opstr = "sys writes "; break;
             case STOREI: case STOREF:
                 opstr = "move "; break;
+            case LABEL:
+                opstr = "label "; break;
+            case JUMP:
+                opstr = "jmp "; break;
+            case LE: case GE: case LT: case GT: case NE: case EQ:
+                if (node.getOperand1().getType() == SymbolType.INT) opstr = "cmpi ";
+                else if (node.getOperand1().getType() == SymbolType.FLOAT) opstr = "cmpr ";
+                switch (op) {
+                    case LE: jmpstr = "jle ";break;
+                    case GE: jmpstr = "jge ";break;
+                    case LT: jmpstr = "jlt "; break;
+                    case GT: jmpstr = "jgt "; break;
+                    case NE: jmpstr = "jne "; break;
+                    case EQ: jmpstr = "jeq "; break;
+                }
+            System.out.println(op);
         }
         
         switch(IRopcodeTypeVerify.numOperands(op)) {
@@ -86,11 +107,27 @@ public class TinyUtility {
             case 1:
                 opstr += fixReg(node.getOperand1()) + " " + fixReg(node.getResult()); break;
             case 2:
-                opstr = "move " + fixReg(node.getOperand1()) + " " + fixReg(node.getResult()) + "\n" + opstr;
-                opstr += fixReg(node.getOperand2()) + " " + fixReg(node.getResult());
+                if (performMove)
+                {
+                    opstr = "move " + fixReg(node.getOperand1()) + " " + fixReg(node.getResult()) + "\n" + opstr;
+                    opstr += fixReg(node.getOperand2()) + " " + fixReg(node.getResult());
+                }else {
+                    opstr +=  fixReg(node.getOperand1()) + " " + fixReg(node.getOperand2());
+                    jmpstr += fixReg(node.getResult()) + "\n";
+                }
         }
-        return opstr + "\n";
+        return opstr + "\n" + jmpstr;
     }
+    
+    private void addNode(Tinynode node) {
+        if (head == null) {
+            head = root = node;
+        } else {
+            head.setNext(node);
+            head = node;
+        }
+    }
+    
     private static String fixReg(IRinterface val) {
         if (val.getASTtype() == ASTtype.TEMPORARY) {
             return "r" + val.getName().substring(2);

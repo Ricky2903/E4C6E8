@@ -18,20 +18,20 @@ public class IRGenerator {
     public IRGenerator() {
     }
     
-    public IRinterface generateExpr(MicroParser.ExprContext exprContextObject, SymbolTable tableObject) {
-        IRinterface expr = generateFactor(exprContextObject.factor(0), tableObject);
-        for (int i = 1; i<exprContextObject.factor().size(); i++) {
+    public IRinterface generateExpr(MicroParser.ExprContext ContextObject, SymbolTable tableObject) {
+        IRinterface expr = generateFactor(ContextObject.factor(0), tableObject);
+        for (int i = 1; i<ContextObject.factor().size(); i++) {
             
-            IRinterface temp = generateFactor(exprContextObject.factor(i), tableObject);
+            IRinterface temp = generateFactor(ContextObject.factor(i), tableObject);
             
             SymbolType type = SymbolType.NULL;
             IRopcodeType op;
             
             if (expr.getType() == SymbolType.FLOAT && temp.getType() == SymbolType.FLOAT) type = SymbolType.FLOAT;
             else if (expr.getType() == SymbolType.INT && temp.getType() == SymbolType.INT) type = SymbolType.INT;
-            else throw new RuntimeException("ERROR: Operator " + exprContextObject.addop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
+            else throw new RuntimeException("ERROR: Operator " + ContextObject.addop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
             
-            if (exprContextObject.addop(i-1).ADD() != null) {
+            if (ContextObject.addop(i-1).ADD() != null) {
                 if (type == SymbolType.FLOAT) op = IRopcodeType.ADDF;
                 else op = IRopcodeType.ADDI;
             } else {
@@ -45,17 +45,17 @@ public class IRGenerator {
         }
         return expr;
     }
-    private IRinterface generateFactor(MicroParser.FactorContext exprContextObject, SymbolTable tableObject) {
-        IRinterface expr = generatePostfix(exprContextObject.postfix_expr(0), tableObject);
-        for (int i = 1; i<exprContextObject.postfix_expr().size(); i++) {
-            IRinterface temp = generatePostfix(exprContextObject.postfix_expr(i), tableObject);
+    private IRinterface generateFactor(MicroParser.FactorContext factorContextObject, SymbolTable tableObject) {
+        IRinterface expr = generatePostfix(factorContextObject.postfix_expr(0), tableObject);
+        for (int i = 1; i<factorContextObject.postfix_expr().size(); i++) {
+            IRinterface temp = generatePostfix(factorContextObject.postfix_expr(i), tableObject);
             SymbolType type = SymbolType.NULL;
             IRopcodeType op;
             if (expr.getType() == SymbolType.FLOAT && temp.getType() == SymbolType.FLOAT) type = SymbolType.FLOAT;
             else if (expr.getType() == SymbolType.INT && temp.getType() == SymbolType.INT) type = SymbolType.INT;
-            else throw new RuntimeException("ERROR: Operator " + exprContextObject.mulop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
+            else throw new RuntimeException("ERROR: Operator " + factorContextObject.mulop(i-1).getText() + " not valid for types " + expr.getType() + " and " + temp.getType());
             
-            if (exprContextObject.mulop(i-1).MULTIPLY() != null) {
+            if (factorContextObject.mulop(i-1).MULTIPLY() != null) {
                 if (type == SymbolType.FLOAT) op = IRopcodeType.MULTF;
                 else op = IRopcodeType.MULTI;
             } else {
@@ -68,43 +68,47 @@ public class IRGenerator {
         }
         return expr;
     }
-    private IRinterface generatePostfix(MicroParser.Postfix_exprContext exprContextObject, SymbolTable tableObject) {
-        if (exprContextObject.primary() != null) {
+    private IRinterface generatePostfix(MicroParser.Postfix_exprContext ContextObject, SymbolTable tableObject) {
+        if (ContextObject.primary() != null) {
             //handle the primary postfix
-            if (exprContextObject.primary().expr() != null) {
-                return generateExpr(exprContextObject.primary().expr(), tableObject);
-            } else if (exprContextObject.primary().id() != null)
+            if (ContextObject.primary().expr() != null) {
+                return generateExpr(ContextObject.primary().expr(), tableObject);
+            } else if (ContextObject.primary().id() != null)
             {
-                String id = exprContextObject.primary().id().getText();
+                String id = ContextObject.primary().id().getText();
                 Symbol s = tableObject.findSymbol(id);
                 if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
-                TempASTnode tmpreg = new TempASTnode (s.getType(), RegFile.getNext());
-                if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.STOREF, new TermASTnode(s.getType(), s.getID()), tmpreg));
-                else if (s.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.STOREI, new TermASTnode(s.getType(),s.getID()), tmpreg));
-                else throw new RuntimeException("Cannot create postfix for type " + s.getType());
-                return tmpreg;
-            } else if (exprContextObject.primary().FLOATLITERAL() != null) {
-                return new LiteralASTnode(Float.parseFloat(exprContextObject.primary().FLOATLITERAL().toString()));
-            } else if (exprContextObject.primary().INTLITERAL() != null) {
-                return new LiteralASTnode(Integer.parseInt(exprContextObject.primary().INTLITERAL().toString()));
+                return new TermASTnode (s.getType(), s.getID());
+            } else if (ContextObject.primary().FLOATLITERAL() != null) {
+                return new LiteralASTnode(Float.parseFloat(ContextObject.primary().FLOATLITERAL().toString()));
+            } else if (ContextObject.primary().INTLITERAL() != null) {
+                return new LiteralASTnode(Integer.parseInt(ContextObject.primary().INTLITERAL().toString()));
             } else return null;
         }else {
             throw new RuntimeException("Cannot handle call expressions yet");
         }    }
 
     
-    public void generateAssignment(MicroParser.Assign_stmtContext exprContextObject, SymbolTable tableObject) {
-        IRinterface tempreg = generateExpr(exprContextObject.expr(), tableObject);
-        Symbol s = tableObject.findSymbol(exprContextObject.id().getText());
-        if (s == null) throw new RuntimeException("ERROR: Could not find symbol " + exprContextObject.id().getText());
+    public void generateAssignment(MicroParser.Assign_stmtContext ContextObject, SymbolTable tableObject) {
+        IRinterface tempreg = generateExpr(ContextObject.expr(), tableObject);
+        Symbol s = tableObject.findSymbol(ContextObject.id().getText());
+        
+        if (s == null) throw new RuntimeException("ERROR: Could not find symbol " + ContextObject.id().getText());
         if (s.getType() != tempreg.getType()) throw new RuntimeException("ERROR: type mismatch");
+        
+        if (tempreg.getASTtype() == ASTtype.TERM) {
+            TempASTnode r = new TempASTnode(tempreg.getType(), RegFile.getNext());
+            if (tempreg.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.STOREF, tempreg, r));
+            else if (tempreg.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.STOREI, tempreg, r));
+            tempreg = r;
+        }
         if (tempreg.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.STOREF, tempreg, new TermASTnode(s.getType(), s.getID())));
         else if (tempreg.getType() == SymbolType.INT) addNode(new IRnode(IRopcodeType.STOREI, tempreg, new TermASTnode(s.getType(), s.getID())));
         else throw new RuntimeException("ERROR: Assignment not valid for type " + tempreg.getType());
     }
     
-    public void generateRead(MicroParser.Read_stmtContext exprContextObject, SymbolTable tableObject) {
-        for (MicroParser.IdContext id : exprContextObject.id_list().id()) {
+    public void generateRead(MicroParser.Read_stmtContext ContextObject, SymbolTable tableObject) {
+        for (MicroParser.IdContext id : ContextObject.id_list().id()) {
             Symbol s = tableObject.findSymbol(id.getText());
             if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
             if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.READF, new TermASTnode(s.getType(), s.getID())));
@@ -112,8 +116,8 @@ public class IRGenerator {
             else throw new RuntimeException("ERROR: Read statement not valid for type " + s.getType());
         }
     }
-    public void generateWrite(MicroParser.Write_stmtContext exprContextObject, SymbolTable tableObject) {
-        for (MicroParser.IdContext id : exprContextObject.id_list().id()) {
+    public void generateWrite(MicroParser.Write_stmtContext ContextObject, SymbolTable tableObject) {
+        for (MicroParser.IdContext id : ContextObject.id_list().id()) {
             Symbol s = tableObject.findSymbol(id.getText());
             if (s == null) throw new RuntimeException("ERROR: Symbol " + id + " not found.");
             if (s.getType() == SymbolType.FLOAT) addNode(new IRnode(IRopcodeType.WRITEF, new TermASTnode(s.getType(), s.getID())));
@@ -123,32 +127,32 @@ public class IRGenerator {
         }
     }
     
-    public void generateIf(MicroParser.If_stmtContext exprContextObject, SymbolTable tableObject) {
-        generateIf(exprContextObject.cond(), tableObject);
+    public void generateIf(MicroParser.If_stmtContext ContextObject, SymbolTable tableObject) {
+        generateIf(ContextObject.cond(), tableObject);
     }
     
     private void generateIf(MicroParser.CondContext conditionalObject, SymbolTable tableObject) {
         IRinterface conditionalExpr1 = generateExpr(conditionalObject.expr(0), tableObject);
         IRinterface conditionalExpr2 = generateExpr(conditionalObject.expr(1), tableObject);
+        IRopcodeType comp = Compare.invert(Compare.generateComparisonOp(conditionalObject.compop()));
         //Generate the inverse comparison.  The code will skip over any statements and jump to another label.
         //Move expression 2 to a register if it is a variable, since tiny cannot deal with 2nd argument non-registers/literals
-        
-        if (conditionalExpr2.getASTtype() == ASTtype.TERM) {
-            TempASTnode tempreg = new TempASTnode(conditionalExpr2.getType(), RegFile.getNext());
+        if (conditionalExpr2.getASTtype() == ASTtype.TERM || conditionalExpr2.getASTtype() == ASTtype.LITERAL) {
+            TempASTnode r = new TempASTnode(conditionalExpr2.getType(), RegFile.getNext());
             if (conditionalExpr1.getType() == SymbolType.FLOAT)
-                addNode(new IRnode(IRopcodeType.STOREF, conditionalExpr2, tempreg));
+                addNode(new IRnode(IRopcodeType.STOREF, conditionalExpr2, r));
             else
-                addNode(new IRnode(IRopcodeType.STOREI, conditionalExpr2, tempreg));
-            conditionalExpr2 = tempreg;
+                addNode(new IRnode(IRopcodeType.STOREI, conditionalExpr2, r));
+            conditionalExpr2 = r;
         }
-        IRopcodeType compare = Compare.invert(Compare.generateComparisonOp(conditionalObject.compop()));
-        LabelASTnode cond_label =  new LabelASTnode(LabelFile.getCondLabel());
-        addNode(new IRnode(compare, conditionalExpr1, conditionalExpr2, cond_label));
-        conditional_label.push(cond_label);
+        
+        LabelASTnode condlabel =  new LabelASTnode(LabelFile.getCondLabel());
+        addNode(new IRnode(comp, conditionalExpr1, conditionalExpr2, condlabel));
+        conditional_label.push(condlabel);
     }
     
-    public void generateElse(MicroParser.Else_partContext exprContextObject) {
-        if (exprContextObject.ELSE() != null) {
+    public void generateElse(MicroParser.Else_partContext ContextObject) {
+        if (ContextObject.ELSE() != null) {
             //If there is an else part, insert the label so that the original branch skips to the else statement
             //list instead of the end of the entire if expression.
             LabelASTnode endLabel = new LabelASTnode(LabelFile.getCondLabel());
@@ -163,12 +167,12 @@ public class IRGenerator {
         addNode(new IRnode(IRopcodeType.LABEL, conditional_label.pop()));
     }
     
-    public void generateWhile(MicroParser.While_stmtContext exprContextObject, SymbolTable tableObject) {
+    public void generateWhile(MicroParser.While_stmtContext ContextObject, SymbolTable tableObject) {
         //Drop a label at the beginning so we can come back here
         LabelASTnode labelObject = new LabelASTnode(LabelFile.getLoopLabel());
         addNode(new IRnode(IRopcodeType.LABEL, labelObject));
         //Evaluate the expression and jump to the end if it's false
-        generateIf(exprContextObject.cond(), tableObject);
+        generateIf(ContextObject.cond(), tableObject);
         conditional_label.push(labelObject);
     }
     
