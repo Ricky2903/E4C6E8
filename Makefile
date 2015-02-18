@@ -6,7 +6,7 @@ ANTLR_SCRIPT := Micro.g4
 all: group compiler
 
 group:
-	@echo "Harshita Kodali, hkodali; Amala Chirayil, achirayi" build 2
+@echo "Harshita Kodali, hkodali; Amala Chirayil, achirayi" build 3
 
 compiler:
 	rm -rf build
